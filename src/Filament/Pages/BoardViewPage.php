@@ -13,7 +13,7 @@ class BoardViewPage extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-view-columns';
 
-    protected static string $view = 'kanban::filament.pages.boards.board-view-wrapper';
+    protected string $view = 'kanban::filament.pages.boards.board-view-wrapper';
 
     protected static bool $shouldRegisterNavigation = false;
 

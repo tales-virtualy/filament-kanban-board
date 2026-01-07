@@ -15,7 +15,7 @@ class BoardCreatePage extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-plus';
 
-    protected static string $view = 'kanban::filament.pages.boards.board-create-page';
+    protected string $view = 'kanban::filament.pages.boards.board-create-page';
 
     protected static bool $shouldRegisterNavigation = false;
 

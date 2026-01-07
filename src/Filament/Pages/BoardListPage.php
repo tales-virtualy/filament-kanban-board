@@ -10,7 +10,7 @@ class BoardListPage extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-view-columns';
 
-    protected static string $view = 'kanban::filament.pages.boards.board-list-page';
+    protected string $view = 'kanban::filament.pages.boards.board-list-page';
 
     public bool $showArchived = false;
 
