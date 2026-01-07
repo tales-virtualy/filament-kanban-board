@@ -1,0 +1,30 @@
+{
+    "name": "tales-virtualy/filament-kanban-board",
+    "description": "A reusable Kanban board for Filament PHP.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tales",
+            "email": "tales@virtualy.tech"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "filament/filament": "^3.0|^4.0",
+        "livewire/livewire": "^3.0",
+        "spatie/laravel-package-tools": "^1.16"
+    },
+    "autoload": {
+        "psr-4": {
+            "FilamentKanban\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "FilamentKanban\\Providers\\KanbanServiceProvider"
+            ]
+        }
+    }
+}

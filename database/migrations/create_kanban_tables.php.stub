@@ -1,0 +1,142 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        $tables = config('kanban.tables');
+
+        Schema::create($tables['boards'], function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->boolean('is_private')->default(false);
+            $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
+            $table->timestamp('archived_at')->nullable()->index();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create($tables['lists'], function (Blueprint $table) use ($tables) {
+            $table->id();
+            $table->foreignId('board_id')->constrained($tables['boards'])->cascadeOnDelete();
+            $table->string('name');
+            $table->integer('order')->default(0);
+            $table->timestamp('archived_at')->nullable()->index();
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->index(['board_id', 'order']);
+        });
+
+        Schema::create($tables['cards'], function (Blueprint $table) use ($tables) {
+            $table->id();
+            $table->foreignId('list_id')->constrained($tables['lists'])->cascadeOnDelete();
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->foreignId('assigned_to')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('created_by')->constrained('users')->onDelete('restrict');
+            $table->date('due_date')->nullable();
+            $table->integer('order')->default(0);
+            $table->timestamp('archived_at')->nullable()->index();
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->index(['list_id', 'order']);
+        });
+
+        Schema::create($tables['card_has_users'], function (Blueprint $table) use ($tables) {
+            $table->id();
+            $table->foreignId('card_id')->constrained($tables['cards'])->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->timestamps();
+        });
+
+        Schema::create($tables['card_activity_logs'], function (Blueprint $table) use ($tables) {
+            $table->id();
+            $table->foreignId('card_id')->constrained($tables['cards'])->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->string('action');
+            $table->json('new_value')->nullable();
+            $table->timestamps();
+
+            $table->index(['card_id', 'created_at']);
+        });
+
+        Schema::create($tables['card_comments'], function (Blueprint $table) use ($tables) {
+            $table->id();
+            $table->foreignId('card_id')->constrained($tables['cards'])->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->text('body');
+            $table->timestamps();
+
+            $table->index(['card_id', 'created_at']);
+        });
+
+        Schema::create($tables['card_checklists'], function (Blueprint $table) use ($tables) {
+            $table->id();
+            $table->foreignId('card_id')->constrained($tables['cards'])->cascadeOnDelete();
+            $table->string('title');
+            $table->integer('position')->default(0);
+            $table->timestamps();
+
+            $table->index(['card_id', 'position']);
+        });
+
+        Schema::create($tables['card_checklist_items'], function (Blueprint $table) use ($tables) {
+            $table->id();
+            $table->foreignId('checklist_id')->constrained(config('kanban.tables.card_checklists'))->cascadeOnDelete();
+            $table->string('description');
+            $table->boolean('is_completed')->default(false);
+            $table->integer('position')->default(0);
+            $table->dateTime('completed_at')->nullable();
+            $table->foreignId('created_by')->constrained('users')->onDelete('restrict');
+            $table->timestamps();
+
+            $table->index(['checklist_id', 'position']);
+        });
+
+        Schema::create($tables['card_attachments'], function (Blueprint $table) use ($tables) {
+            $table->id();
+            $table->foreignId('card_id')->constrained($tables['cards'])->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->string('file_name');
+            $table->string('file_path');
+            $table->string('mime_type')->nullable();
+            $table->unsignedBigInteger('size')->nullable();
+            $table->timestamps();
+
+            $table->index(['card_id', 'created_at']);
+        });
+
+        Schema::create($tables['board_has_users'], function (Blueprint $table) use ($tables) {
+            $table->id();
+            $table->foreignId('board_id')->constrained($tables['boards'])->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->string('role')->default('member');
+            $table->timestamps();
+
+            $table->unique(['board_id', 'user_id']);
+        });
+    }
+
+    public function down(): void
+    {
+        $tables = config('kanban.tables');
+
+        Schema::dropIfExists($tables['board_has_users']);
+        Schema::dropIfExists($tables['card_attachments']);
+        Schema::dropIfExists($tables['card_checklist_items']);
+        Schema::dropIfExists($tables['card_checklists']);
+        Schema::dropIfExists($tables['card_comments']);
+        Schema::dropIfExists($tables['card_activity_logs']);
+        Schema::dropIfExists($tables['card_has_users']);
+        Schema::dropIfExists($tables['cards']);
+        Schema::dropIfExists($tables['lists']);
+        Schema::dropIfExists($tables['boards']);
+    }
+};
