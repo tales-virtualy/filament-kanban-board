@@ -34,6 +34,7 @@ class KanbanServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'kanban');
         $this->registerLivewireComponents();
     }
 
