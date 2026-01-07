@@ -11,7 +11,7 @@ use Filament\Forms\Components\Select;
 
 class BoardViewPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-view-columns';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-view-columns';
 
     protected static string $view = 'kanban::filament.pages.boards.board-view-wrapper';
 

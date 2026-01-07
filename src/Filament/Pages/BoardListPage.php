@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class BoardListPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-view-columns';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-view-columns';
 
     protected static string $view = 'kanban::filament.pages.boards.board-list-page';
 
