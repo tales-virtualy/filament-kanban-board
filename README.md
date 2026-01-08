@@ -38,6 +38,37 @@ The configuration file `config/kanban.php` allows you to customize:
 - `storage_disk`: Disk used for attachments (default: `public`).
 - `table_names`: Customize database table names.
 
+- `table_names`: Customize database table names.
+
+## Styling
+
+This package uses Tailwind CSS for styling. To ensure the board looks correct, you must include the package's views in your project's `tailwind.config.js` or `resources/css/app.css` (for Tailwind v4).
+
+### For Tailwind v4 (`app.css`):
+
+Add the `@source` directive to your `resources/css/app.css`:
+
+```css
+@import 'tailwindcss';
+
+@source '../../vendor/tales-virtualy/filament-kanban-board/resources/views/**/*.blade.php'; 
+/* ... other imports */
+```
+
+### For Tailwind v3 (`tailwind.config.js`):
+
+Add the Views path to the `content` array:
+
+```js
+module.exports = {
+    content: [
+        './resources/**/*.blade.php',
+        './vendor/tales-virtualy/filament-kanban-board/resources/views/**/*.blade.php', 
+    ],
+    // ...
+}
+```
+
 ## Usage
 
 ### Registering the Plugin

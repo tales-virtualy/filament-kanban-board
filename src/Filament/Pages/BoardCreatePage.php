@@ -21,10 +21,7 @@ class BoardCreatePage extends Page
 
     public ?array $data = [];
 
-    public function mount(): void
-    {
-        $this->form->fill();
-    }
+
 
     public function getTitle(): string
     {
