@@ -17,7 +17,7 @@
         </div>
 
         <form wire:submit="create">
-            {{ $this->form }}
+            {{ $this->getForm('form') }}
 
             <div class="flex items-center justify-end gap-3 mt-6">
                 {{ $this->getCancelFormAction() }}

@@ -21,7 +21,12 @@ class BoardCreatePage extends Page
 
     public ?array $data = [];
 
-
+    protected function getForms(): array
+    {
+        return [
+            'form',
+        ];
+    }
 
     public function getTitle(): string
     {
