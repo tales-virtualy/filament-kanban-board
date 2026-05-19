@@ -35,8 +35,9 @@ class KanbanServiceProvider extends PackageServiceProvider
             ->hasTranslations()
             ->hasMigrations([
                 'create_kanban_tables',
-                'create_kanban_tag_tables'
-            ]);
+                'create_kanban_tag_tables',
+            ])
+            ->runsMigrations();
     }
 
     public function packageBooted(): void

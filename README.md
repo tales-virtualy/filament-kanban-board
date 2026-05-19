@@ -29,21 +29,67 @@ It will **not** work in a plain Laravel app without Filament, nor as a generic L
 
 ## Installation
 
-Install only in a **Laravel + Filament Panel** project:
+Install only in a **Laravel + Filament Panel** project. Follow every step in order:
+
+### 1. Install the package
 
 ```bash
-composer require tales-virtualy/filament-kanban-board
+composer require tales-virtualy/filament-kanban-board:^1.0.9 -W
 ```
 
-Publish the configuration and migrations:
+Use `-W` if your app is on Filament 5 so Composer can resolve dependencies.
+
+### 2. Register the plugin (required)
+
+In your Filament panel provider (for example `app/Providers/Filament/AdminPanelProvider.php`):
+
+```php
+use FilamentKanban\FilamentKanbanPlugin;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        ->plugins([
+            FilamentKanbanPlugin::make(),
+        ]);
+        // ...discoverResources(), middleware(), etc.
+}
+```
+
+Without this step the Kanban menu will not appear.
+
+### 3. Run migrations (required)
+
+The package registers its migrations automatically. From your app root:
 
 ```bash
-php artisan vendor:publish --tag="filament-kanban-board-config"
+php artisan migrate
+```
+
+You should see migrations such as `create_kanban_tables` and `create_kanban_tag_tables`. If `php artisan migrate` prints **Nothing to migrate** but opening Kanban fails with **relation "boards" does not exist**, either migrations did not run or you need to update the package (v1.0.9+ runs them from vendor).
+
+Optional — publish migrations into your app instead of loading them from vendor:
+
+```bash
 php artisan vendor:publish --tag="filament-kanban-board-migrations"
 php artisan migrate
 ```
 
-For attachments on the `public` disk, run `php artisan storage:link` if you have not already.
+### 4. Publish config (optional)
+
+```bash
+php artisan vendor:publish --tag="filament-kanban-board-config"
+```
+
+### 5. Storage link (if you use attachments on `public`)
+
+```bash
+php artisan storage:link
+```
+
+### 6. Tailwind (recommended)
+
+See [Styling](#styling), then rebuild your assets (`npm run build`).
 
 ## Configuration
 
@@ -110,22 +156,6 @@ module.exports = {
 The card modal also includes scoped CSS so Cancel/Save and the two-column layout work even when some utility classes are not compiled in the host app.
 
 ## Usage
-
-### Registering the plugin
-
-Add the plugin to your **Filament Panel** provider (for example `app/Providers/Filament/AdminPanelProvider.php`):
-
-```php
-use FilamentKanban\FilamentKanbanPlugin;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        ->plugins([
-            FilamentKanbanPlugin::make(),
-        ]);
-}
-```
 
 ### Accessing the boards
 

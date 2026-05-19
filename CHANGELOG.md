@@ -2,6 +2,13 @@
 
 Este arquivo registra apenas mudancas do pacote que entram na release, sem incluir playground, containers ou arquivos locais de teste.
 
+## 2026-05-18 (v1.0.9)
+
+### Instalacao
+
+- Migrations do Kanban passam a rodar automaticamente com `php artisan migrate` (`runsMigrations()` no service provider).
+- README reorganizado em passos numerados (composer, plugin, migrate, config, storage, Tailwind).
+
 ## 2026-05-18 (v1.0.8)
 
 ### Compatibilidade
