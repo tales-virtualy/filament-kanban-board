@@ -4,7 +4,7 @@ A beautiful, interactive Kanban Board for **Filament Panels**. Manage your tasks
 
 ## Requirements
 
-This package is **not** a standalone Kanban UI. It is built specifically for applications that already use **[Filament](https://filamentphp.com/) Panels** (v3 or v4) on **Laravel** (PHP 8.2+).
+This package is **not** a standalone Kanban UI. It is built specifically for applications that already use **[Filament](https://filamentphp.com/) Panels** (v3, v4, or v5) on **Laravel** (PHP 8.2+).
 
 You must:
 
@@ -138,6 +138,7 @@ See [CHANGELOG.md](CHANGELOG.md) for release notes.
 ## Credits
 
 - [Tales](https://github.com/tales-virtualy)
+- [All Contributors](../../contributors)
 
 ## License
 

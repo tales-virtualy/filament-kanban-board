@@ -2,6 +2,12 @@
 
 Este arquivo registra apenas mudancas do pacote que entram na release, sem incluir playground, containers ou arquivos locais de teste.
 
+## 2026-05-18 (v1.0.8)
+
+### Compatibilidade
+
+- Ampliado suporte do Composer para `filament/filament` **^5.0** e `livewire/livewire` **^4.0** (projetos como Filament v5 + Livewire v4).
+
 ## 2026-05-18
 
 ### Arquivamento de cartoes
