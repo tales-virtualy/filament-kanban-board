@@ -138,7 +138,6 @@ See [CHANGELOG.md](CHANGELOG.md) for release notes.
 ## Credits
 
 - [Tales](https://github.com/tales-virtualy)
-- [All Contributors](../../contributors)
 
 ## License
 
