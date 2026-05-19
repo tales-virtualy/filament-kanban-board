@@ -34,7 +34,7 @@ Install only in a **Laravel + Filament Panel** project. Follow every step in ord
 ### 1. Install the package
 
 ```bash
-composer require tales-virtualy/filament-kanban-board:^1.0.9 -W
+composer require tales-virtualy/filament-kanban-board:^1.0.10 -W
 ```
 
 Use `-W` if your app is on Filament 5 so Composer can resolve dependencies.
@@ -66,14 +66,16 @@ The package registers its migrations automatically. From your app root:
 php artisan migrate
 ```
 
-You should see migrations such as `create_kanban_tables` and `create_kanban_tag_tables`. If `php artisan migrate` prints **Nothing to migrate** but opening Kanban fails with **relation "boards" does not exist**, either migrations did not run or you need to update the package (v1.0.9+ runs them from vendor).
+You should see migrations such as `create_kanban_tables` and `create_kanban_tag_tables`.
 
-Optional — publish migrations into your app instead of loading them from vendor:
+If `php artisan migrate` prints **Nothing to migrate** but Kanban fails with **relation "boards" does not exist**, update to **v1.0.10+** and run `migrate` again, or publish the migrations manually:
 
 ```bash
 php artisan vendor:publish --tag="filament-kanban-board-migrations"
 php artisan migrate
 ```
+
+Use **either** automatic vendor migrations **or** published copies in `database/migrations/`, not both on a fresh database (published files are for customization).
 
 ### 4. Publish config (optional)
 

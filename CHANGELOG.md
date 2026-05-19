@@ -2,6 +2,13 @@
 
 Este arquivo registra apenas mudancas do pacote que entram na release, sem incluir playground, containers ou arquivos locais de teste.
 
+## 2026-05-18 (v1.0.10)
+
+### Instalacao
+
+- Corrigido `runsMigrations()`: o Laravel so carrega arquivos `.php`, nao `.stub` — migrations reais adicionadas em `database/migrations/`.
+- Migrations idempotentes se a tabela `boards` ja existir (quem publicou na v1.0.8/1.0.9 nao quebra ao atualizar).
+
 ## 2026-05-18 (v1.0.9)
 
 ### Instalacao
