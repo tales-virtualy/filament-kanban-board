@@ -8,6 +8,7 @@ return [
     "Private board" => "Private board",
     "Only members will be able to see this board" => "Only members will be able to see this board",
     "Card Title" => "Card Title",
+    "List Name" => "List name",
     "Describe the purpose of this board" => "Describe the purpose of this board...",
     "Select List" => "Select List",
     "current" => "current",
@@ -19,13 +20,21 @@ return [
         "Create Board" => "Create Board",
         "Create first board" => "Create first board",
         "Add Card" => "Add Card",
+        "Add card" => "Add Card",
         "Add item" => "Add item",
         "Add Checklist" => "Add Checklist",
+        "Create New List" => "Create New List",
         "Move" => "Move",
+        "Archive list" => "Archive list",
         "Archive card" => "Archive card",
         "Confirm Archiving" => "Confirm Archiving",
         "Show archived" => "Show archived",
         "Hide archived" => "Hide archived",
+        "Show archived lists" => "Show archived lists",
+        "Hide archived lists" => "Hide archived lists",
+        "Show archived cards" => "Show archived cards",
+        "Hide archived cards" => "Hide archived cards",
+        "Unarchive card" => "Unarchive card",
         "Archive all lists" => "Archive all lists",
         "Unarchive all lists" => "Unarchive all lists",
         "Delete board" => "Delete board",
@@ -62,11 +71,16 @@ return [
         "title" => "Comments",
         "placeholder" => "Write a comment...",
         "post_button" => "Comment",
+        "edit" => "Edit comment",
+        "empty" => "No comments yet",
+        "confirm_delete" => "Delete this comment?",
     ],
 
     "activity" => [
         "title" => "Activity",
         "show_all" => "Show all",
+        "system" => "System",
+        "empty" => "No activity yet",
     ],
 
     "attachment" => [
@@ -88,10 +102,21 @@ return [
 
     "member" => [
         "title" => "Members",
+        "manage" => "Manage members",
+        "and_more" => ":count more",
+        "count" => "{0} No members|{1} :count member|[2,*] :count members",
     ],
 
     "tag" => [
         "title" => "Tags",
+    ],
+
+    "board" => [
+        "access_denied_title" => "Access restricted",
+        "access_denied_message" => "You do not have permission to access the board «:name». Ask a board admin or owner for access.",
+        "restricted_badge" => "No access",
+        "restricted_hint" => "This board is private. It appears in your list, but you must be a member to open it.",
+        "back_to_boards" => "Back to boards",
     ],
 
     "notification" => [
@@ -113,6 +138,7 @@ return [
             "Card saved" => "Card saved",
             "Card moved successfully" => "Card moved successfully",
             "Card archived" => "Card archived",
+            "Card unarchived" => "Card unarchived",
         ],
         "checklists" => [
             "confirm_delete" => "Are you sure you want to delete this checklist?",
@@ -121,6 +147,8 @@ return [
             "confirm_delete" => "Are you sure you want to delete this attachment?",
         ],
         "lists" => [
+            "List archived" => "List archived",
+            "List unarchived" => "List unarchived",
             "confirm_archive" => "Are you sure you want to archive this list?",
         ],
     ],

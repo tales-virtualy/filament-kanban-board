@@ -17,17 +17,21 @@ class AttachmentsPopover extends Component
     public function mount(Card $card): void
     {
         $this->card = $card;
+        $this->authorize('view', $this->card);
     }
 
     public function updatedFile(): void
     {
+        $this->authorize('update', $this->card);
+
         $this->validate([
-            'file' => 'required|max:10240', // 10MB
+            'file' => 'required|file|max:10240',
         ]);
 
         $name = $this->file->getClientOriginalName();
         $disk = config('kanban.storage_disk', 'public');
-        $path = $this->file->store('kanban/card-attachments/' . $this->card->id, $disk);
+        $directory = trim(config('kanban.storage_directory', 'kanban/card-attachments'), '/');
+        $path = $this->file->store("{$directory}/{$this->card->id}", $disk);
 
         $this->card->attachments()->create([
             'user_id' => auth()->id(),
@@ -37,6 +41,7 @@ class AttachmentsPopover extends Component
             'size' => $this->file->getSize(),
         ]);
 
+        $this->card->refresh();
         $this->reset('file');
         $this->open = false;
 

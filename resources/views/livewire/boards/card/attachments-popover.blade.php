@@ -1,7 +1,8 @@
-<div class="relative" x-data="{ open: @entangle('open') }">
-    <button type="button" @click="open = !open" x-tooltip="'{{ __('kanban::kanban.attachment.tooltip.attach_file') }}'"
-        class="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-500">
-        <x-heroicon-o-paper-clip class="w-5 h-5" />
+<div class="relative w-full" x-data="{ open: @entangle('open') }">
+    <button type="button" @click="open = !open"
+        class="flex w-full items-center gap-2 rounded px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+        <x-heroicon-o-paper-clip class="w-4 h-4 shrink-0 text-gray-500" />
+        <span>{{ __('kanban::kanban.attachment.title') }}</span>
     </button>
 
     <div x-show="open" x-transition @click.outside="open = false" x-cloak
@@ -25,6 +26,10 @@
                     <p class="text-[10px] text-gray-400 mt-1">{{ __('kanban::kanban.attachment.max_size') }}</p>
                 </div>
             </label>
+
+            @error('file')
+                <p class="mt-2 text-xs text-red-500">{{ $message }}</p>
+            @enderror
 
             <div wire:loading wire:target="file" class="text-center">
                 <span class="text-xs text-gray-500 flex items-center justify-center gap-2">

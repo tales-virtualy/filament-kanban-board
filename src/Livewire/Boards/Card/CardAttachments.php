@@ -11,16 +11,27 @@ class CardAttachments extends Component
 {
     public Card $card;
 
+    protected $listeners = [
+        'card-updated' => 'refreshCard',
+    ];
+
     public function mount(Card $card): void
     {
         $this->card = $card;
+        $this->authorize('view', $this->card);
+    }
+
+    public function refreshCard(): void
+    {
+        $this->card->refresh();
+        $this->card->load('attachments');
     }
 
     public function deleteAttachment(int $attachmentId): void
     {
         $attachment = CardAttachment::findOrFail($attachmentId);
 
-        $this->authorize('delete', $attachment->card);
+        $this->authorize('update', $this->card);
 
         $fileName = $attachment->file_name;
         $attachment->delete();

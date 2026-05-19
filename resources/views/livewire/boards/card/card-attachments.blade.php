@@ -11,7 +11,8 @@
                 <div
                     class="w-12 h-12 rounded bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                     @if(str_contains($attachment->mime_type, 'image'))
-                        <img src="{{ Storage::disk(config('kanban.storage_disk'))->url($attachment->file_path) }}"
+                        <img src="{{ $attachment->url }}"
+                            alt="{{ $attachment->file_name }}"
                             class="w-full h-full object-cover">
                     @else
                         <x-heroicon-o-document class="w-6 h-6 text-gray-400" />
@@ -26,7 +27,7 @@
                     <div class="flex items-center gap-2 text-xs text-gray-500">
                         <span>{{ $attachment->created_at->format('d M, Y') }}</span>
                         <span>•</span>
-                        <a href="{{ Storage::disk(config('kanban.storage_disk'))->url($attachment->file_path) }}"
+                        <a href="{{ $attachment->url }}"
                             target="_blank" class="text-primary-600 hover:underline">
                             {{ __('kanban::kanban.attachment.download') }}
                         </a>

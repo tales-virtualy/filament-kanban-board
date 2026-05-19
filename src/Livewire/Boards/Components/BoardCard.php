@@ -15,6 +15,11 @@ class BoardCard extends Component
         $this->board = $board;
     }
 
+    public function getCanViewProperty(): bool
+    {
+        return auth()->user()?->can('view', $this->board) ?? false;
+    }
+
     public function render()
     {
         return view('kanban::livewire.boards.components.board-card');
@@ -22,6 +27,6 @@ class BoardCard extends Component
 
     public function openBoard()
     {
-        return $this->redirect(BoardViewPage::getUrl(['board' => $this->board->id]));
+        return $this->redirect(BoardViewPage::getUrl(['board' => $this->board]));
     }
 }

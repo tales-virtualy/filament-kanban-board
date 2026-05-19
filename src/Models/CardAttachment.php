@@ -50,7 +50,7 @@ class CardAttachment extends Model
 
     public function getUrlAttribute(): string
     {
-        return Storage::disk('s3')->url($this->file_path);
+        return Storage::disk(config('kanban.storage_disk', 'public'))->url($this->file_path);
     }
 
     public function isImage(): bool
@@ -65,7 +65,7 @@ class CardAttachment extends Model
         });
 
         static::deleting(function ($attachment) {
-            Storage::disk('s3')->delete($attachment->file_path);
+            Storage::disk(config('kanban.storage_disk', 'public'))->delete($attachment->file_path);
         });
     }
 }

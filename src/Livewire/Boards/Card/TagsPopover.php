@@ -16,12 +16,15 @@ class TagsPopover extends Component
     public function mount(Card $card): void
     {
         $this->card = $card;
+        $this->authorize('view', $this->card);
         $this->tags = $card->tags->pluck('id')->toArray();
         $this->availableTags = CustomTag::orderBy('name')->get();
     }
 
     public function toggleTag(int $tagId): void
     {
+        $this->authorize('update', $this->card);
+
         if (in_array($tagId, $this->tags)) {
             $this->tags = array_values(array_diff($this->tags, [$tagId]));
         } else {

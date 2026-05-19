@@ -33,6 +33,11 @@ class CardActivityLog extends Model
         return $this->belongsTo(config('kanban.user_model'));
     }
 
+    public function getFormattedMessageAttribute(): string
+    {
+        return $this->description;
+    }
+
     public function getDescriptionAttribute(): string
     {
         return match ($this->action) {

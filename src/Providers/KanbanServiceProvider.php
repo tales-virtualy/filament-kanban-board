@@ -2,6 +2,9 @@
 
 namespace FilamentKanban\Providers;
 
+use FilamentKanban\Models\Board;
+use FilamentKanban\Models\BoardList;
+use FilamentKanban\Models\Card;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Livewire\Livewire;
@@ -16,6 +19,10 @@ use FilamentKanban\Livewire\Boards\Card\DatePopover;
 use FilamentKanban\Livewire\Boards\Card\MembersPopover;
 use FilamentKanban\Livewire\Boards\Card\TagsPopover;
 use FilamentKanban\Livewire\Boards\Components\BoardCard;
+use FilamentKanban\Policies\BoardListPolicy;
+use FilamentKanban\Policies\BoardPolicy;
+use FilamentKanban\Policies\CardPolicy;
+use Illuminate\Support\Facades\Gate;
 
 class KanbanServiceProvider extends PackageServiceProvider
 {
@@ -35,7 +42,15 @@ class KanbanServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'kanban');
+        $this->registerPolicies();
         $this->registerLivewireComponents();
+    }
+
+    protected function registerPolicies(): void
+    {
+        Gate::policy(Board::class, BoardPolicy::class);
+        Gate::policy(BoardList::class, BoardListPolicy::class);
+        Gate::policy(Card::class, CardPolicy::class);
     }
 
     protected function registerLivewireComponents(): void

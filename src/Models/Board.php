@@ -4,6 +4,7 @@ namespace FilamentKanban\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -23,6 +24,7 @@ class Board extends Model
     ];
 
     protected $casts = [
+        'is_private' => 'boolean',
         'archived_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
@@ -94,21 +96,50 @@ class Board extends Model
 
     public function isOwner($user): bool
     {
-        return $this->owner_id === $user->id;
+        if (!$user) {
+            return false;
+        }
+
+        return (string) $this->owner_id === (string) $user->getKey();
     }
 
     public function isAdmin($user): bool
     {
+        if (!$user) {
+            return false;
+        }
+
         if ($this->isOwner($user)) {
             return true;
         }
 
-        return $this->members()->where(config('kanban.tables.user_table_name', 'users') . '.id', $user->id)->wherePivotIn('role', ['admin'])->exists();
+        return $this->members()
+            ->whereKey($user->getKey())
+            ->wherePivotIn('role', ['admin'])
+            ->exists();
     }
 
     public function isMember($user): bool
     {
-        return $this->isOwner($user) || $this->members()->where('user_id', $user->id)->exists();
+        if (!$user) {
+            return false;
+        }
+
+        return $this->isOwner($user) || $this->members()->whereKey($user->getKey())->exists();
+    }
+
+    /**
+     * Owner plus board members, deduplicated for display.
+     */
+    public function participants(): Collection
+    {
+        $this->loadMissing(['owner', 'members']);
+
+        return collect([$this->owner])
+            ->merge($this->members)
+            ->filter()
+            ->unique(fn ($user) => $user->getKey())
+            ->values();
     }
 
     public function isArchived(): bool
@@ -139,7 +170,21 @@ class Board extends Model
 
     public function unarchiveAllLists(): void
     {
+        $listIds = $this->lists()->whereNotNull('archived_at')->pluck('id');
+
         $this->lists()->whereNotNull('archived_at')->update(['archived_at' => null]);
+
+        if ($listIds->isNotEmpty()) {
+            Card::whereIn('list_id', $listIds)->whereNotNull('archived_at')->update(['archived_at' => null]);
+        }
+    }
+
+    public function hasArchivedCardsInActiveLists(): bool
+    {
+        return $this->lists()
+            ->active()
+            ->whereHas('cards', fn($query) => $query->whereNotNull('archived_at'))
+            ->exists();
     }
 
     public function hasArchivedLists(): bool

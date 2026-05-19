@@ -3,7 +3,6 @@
 namespace FilamentKanban\Policies;
 
 use FilamentKanban\Models\Board;
-use Illuminate\Auth\Access\Response;
 
 class BoardPolicy
 {
@@ -12,7 +11,7 @@ class BoardPolicy
      */
     public function viewAny($user): bool
     {
-        return $user->can('view_boards');
+        return true;
     }
 
     /**
@@ -20,15 +19,11 @@ class BoardPolicy
      */
     public function view($user, Board $board): bool
     {
-        if (!$user->can('view_boards')) {
-            return false;
-        }
-
         if (!$board->is_private) {
             return true;
         }
 
-        return $board->isOwner($user) || $board->members()->where('user_id', $user->id)->exists();
+        return $board->isMember($user);
     }
 
     /**
@@ -36,7 +31,7 @@ class BoardPolicy
      */
     public function create($user): bool
     {
-        return $user->can('create_boards');
+        return true;
     }
 
     /**

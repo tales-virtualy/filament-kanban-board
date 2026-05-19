@@ -15,6 +15,7 @@ class MembersPopover extends Component
     public function mount(Card $card): void
     {
         $this->card = $card;
+        $this->authorize('view', $this->card);
         $this->members = $card->members->pluck('id')->toArray();
         $board = $card->list->board;
 
@@ -27,6 +28,8 @@ class MembersPopover extends Component
 
     public function toggleMember(int $userId): void
     {
+        $this->authorize('update', $this->card);
+
         if (in_array($userId, $this->members)) {
             $this->members = array_diff($this->members, [$userId]);
             $this->card->removeMember($userId);

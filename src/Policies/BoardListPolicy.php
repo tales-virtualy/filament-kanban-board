@@ -4,7 +4,6 @@ namespace FilamentKanban\Policies;
 
 use FilamentKanban\Models\Board;
 use FilamentKanban\Models\BoardList;
-use Illuminate\Auth\Access\Response;
 
 class BoardListPolicy
 {
@@ -21,7 +20,7 @@ class BoardListPolicy
      */
     public function view($user, BoardList $list): bool
     {
-        return $list->board->isMember($user);
+        return !$list->board->is_private || $list->board->isMember($user);
     }
 
     /**

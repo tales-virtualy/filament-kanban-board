@@ -5,3 +5,8 @@
 .phpunit.result.cache
 .env
 .DS_Store
+/playground/vendor
+/playground/node_modules
+/playground/.env
+/playground/.phpunit.result.cache
+/playground/database/*.sqlite

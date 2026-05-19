@@ -1,7 +1,8 @@
-<div class="relative" x-data="{ open: @entangle('open') }">
-    <button type="button" @click="open = !open" x-tooltip="'{{ __('kanban::kanban.tag.title') }}'"
-        class="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-500">
-        <x-heroicon-o-tag class="w-5 h-5" />
+<div class="relative w-full" x-data="{ open: @entangle('open') }">
+    <button type="button" @click="open = !open"
+        class="flex w-full items-center gap-2 rounded px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+        <x-heroicon-o-tag class="w-4 h-4 shrink-0 text-gray-500" />
+        <span>{{ __('kanban::kanban.tag.title') }}</span>
     </button>
 
     <div x-show="open" x-transition @click.outside="open = false" x-cloak

@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Forms\Components\Select;
+use Filament\Panel;
 
 class BoardViewPage extends Page
 {
@@ -19,47 +20,68 @@ class BoardViewPage extends Page
 
     public Board $board;
 
+    public bool $accessDenied = false;
+
     protected $listeners = [
-        'refresh-board' => '$refresh',
+        'refresh-board' => 'refreshBoard',
     ];
+
+    public static function getRoutePath(Panel $panel): string
+    {
+        return '/board-view-page/{board}';
+    }
 
     public function mount(Board $board): void
     {
-        $this->board = $board;
-        $this->authorize('view', $board);
+        $this->board = $board->load(['owner', 'members']);
+
+        if (! auth()->user()?->can('view', $board)) {
+            $this->accessDenied = true;
+
+            return;
+        }
     }
 
     public function getTitle(): string
     {
-        return $this->board->name;
+        return $this->board->name ?? __('kanban::kanban.title');
     }
 
     public function refreshBoard(): void
     {
         $this->board->refresh();
+        $this->board->load(['owner', 'members']);
     }
 
     protected function getHeaderActions(): array
     {
+        if ($this->accessDenied) {
+            return [];
+        }
+
         return [
             Action::make('settings')
                 ->label(__('kanban::kanban.buttons.Board Settings'))
                 ->icon('heroicon-o-cog-6-tooth')
                 ->color('gray')
                 ->visible(fn() => auth()->user()->can('update', $this->board))
+                ->fillForm(fn(): array => [
+                    'name' => $this->board->name,
+                    'description' => $this->board->description,
+                    'is_private' => (bool) $this->board->is_private,
+                ])
                 ->form([
                     \Filament\Forms\Components\TextInput::make('name')
                         ->label(__('kanban::kanban.Board Name'))
-                        ->required()
-                        ->default($this->board->name),
+                        ->required(),
                     \Filament\Forms\Components\Textarea::make('description')
                         ->label(__('kanban::kanban.Description'))
-                        ->default($this->board->description),
+                        ->rows(3),
                     \Filament\Forms\Components\Toggle::make('is_private')
-                        ->label(__('kanban::kanban.Private board'))
-                        ->default($this->board->is_private),
+                        ->label(__('kanban::kanban.Private board')),
                 ])
                 ->action(function (array $data) {
+                    $data['is_private'] = (bool) ($data['is_private'] ?? false);
                     $this->board->update($data);
                     Notification::make()
                         ->success()
@@ -68,7 +90,7 @@ class BoardViewPage extends Page
                 }),
 
             Action::make('members')
-                ->label(__('kanban::kanban.member.title'))
+                ->label(fn (): string => $this->membersActionLabel())
                 ->icon('heroicon-o-users')
                 ->color('gray')
                 ->visible(fn() => auth()->user()->can('update', $this->board))
@@ -82,6 +104,8 @@ class BoardViewPage extends Page
                 ])
                 ->action(function (array $data) {
                     $this->board->members()->sync($data['members'] ?? []);
+                    $this->board->load(['owner', 'members']);
+
                     Notification::make()
                         ->success()
                         ->title(__('kanban::kanban.notification.boards.Members updated'))
@@ -102,7 +126,9 @@ class BoardViewPage extends Page
                         $this->board->archiveAllListsAndCards();
                         Notification::make()->success()->title(__('kanban::kanban.notification.boards.Lists archived'))->send();
                     }
-                    $this->dispatch('refresh-board');
+
+                    $this->refreshBoard();
+                    $this->dispatch('refresh-board')->to(BoardView::class);
                 }),
 
             Action::make('archive')
@@ -129,5 +155,16 @@ class BoardViewPage extends Page
                     $this->redirect(BoardListPage::getUrl());
                 }),
         ];
+    }
+
+    protected function membersActionLabel(): string
+    {
+        $count = $this->board->participants()->count();
+
+        if ($count <= 1) {
+            return __('kanban::kanban.member.title');
+        }
+
+        return __('kanban::kanban.member.title') . " ({$count})";
     }
 }

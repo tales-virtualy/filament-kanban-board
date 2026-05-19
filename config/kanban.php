@@ -26,6 +26,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Attachments
+    |--------------------------------------------------------------------------
+    |
+    | Configure which filesystem disk the package should use for uploads and
+    | the base directory where card attachments should be stored.
+    |
+    */
+    'storage_disk' => 'public',
+
+    'storage_directory' => 'kanban/card-attachments',
+
+    /*
+    |--------------------------------------------------------------------------
     | Table Names
     |--------------------------------------------------------------------------
     |

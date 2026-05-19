@@ -6,13 +6,17 @@ use FilamentKanban\Models\Board;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 
-class BoardCreatePage extends Page
+class BoardCreatePage extends Page implements HasForms
 {
+    use InteractsWithForms;
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-plus';
 
     protected string $view = 'kanban::filament.pages.boards.board-create-page';
@@ -20,6 +24,18 @@ class BoardCreatePage extends Page
     protected static bool $shouldRegisterNavigation = false;
 
     public ?array $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill([
+            'is_private' => false,
+        ]);
+    }
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->can('create', Board::class) ?? false;
+    }
 
     protected function getForms(): array
     {
@@ -33,7 +49,7 @@ class BoardCreatePage extends Page
         return __('kanban::kanban.buttons.Create Board');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -55,17 +71,20 @@ class BoardCreatePage extends Page
 
     public function create(): void
     {
+        $this->authorize('create', Board::class);
+
         $data = $this->form->getState();
+        $data['is_private'] = (bool) ($data['is_private'] ?? false);
         $data['owner_id'] = auth()->id();
 
-        $board = Board::create($data);
+        Board::create($data);
 
         Notification::make()
             ->success()
             ->title(__('kanban::kanban.notification.boards.Board created successfully'))
             ->send();
 
-        $this->redirect(BoardViewPage::getUrl(['board' => $board->id]));
+        $this->redirect(BoardListPage::getUrl());
     }
 
     protected function getCancelFormAction(): Action

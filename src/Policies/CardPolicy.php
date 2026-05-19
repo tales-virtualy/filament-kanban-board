@@ -4,7 +4,6 @@ namespace FilamentKanban\Policies;
 
 use FilamentKanban\Models\BoardList;
 use FilamentKanban\Models\Card;
-use Illuminate\Auth\Access\Response;
 
 class CardPolicy
 {
@@ -21,7 +20,7 @@ class CardPolicy
      */
     public function view($user, Card $card): bool
     {
-        return $card->list->board->isMember($user);
+        return !$card->list->board->is_private || $card->list->board->isMember($user);
     }
 
     /**
@@ -41,6 +40,10 @@ class CardPolicy
      */
     public function update($user, Card $card): bool
     {
+        if ($card->list->board->isArchived() || $card->list->isArchived() || $card->isArchived()) {
+            return false;
+        }
+
         if ($card->list->board->isAdmin($user)) {
             return true;
         }

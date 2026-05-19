@@ -8,11 +8,20 @@ use Livewire\Component;
 class CardActivityFeed extends Component
 {
     public Card $card;
+
+    public bool $compact = false;
+
     public bool $showAll = false;
 
-    public function mount(Card $card): void
+    protected $listeners = [
+        'card-updated' => '$refresh',
+    ];
+
+    public function mount(Card $card, bool $compact = false): void
     {
         $this->card = $card;
+        $this->compact = $compact;
+        $this->authorize('view', $this->card);
     }
 
     public function toggleShowAll(): void

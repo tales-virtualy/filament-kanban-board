@@ -17,17 +17,27 @@ class CardForm extends Component
     public $currentBoardLists = [];
     public bool $confirmingArchive = false;
 
+    public int $cardContentKey = 0;
+
     protected $listeners = [
-        'checklist-updated' => '$refresh',
+        'checklist-updated' => 'refreshCardMetadata',
         'card-updated' => 'refreshCard',
     ];
 
+    public function refreshCardMetadata(): void
+    {
+        if (!$this->card) {
+            return;
+        }
+
+        $this->card->refresh();
+        $this->card->load(['checklists.items', 'members', 'tags', 'attachments']);
+    }
+
     public function refreshCard(): void
     {
-        if ($this->card) {
-            $this->card->refresh();
-            $this->card->load(['checklists.items', 'members', 'tags']);
-        }
+        $this->refreshCardMetadata();
+        $this->cardContentKey++;
     }
 
     protected function rules(): array
@@ -47,8 +57,10 @@ class CardForm extends Component
                 'checklists.items',
                 'members',
                 'tags',
-                'list.board.lists'
+                'attachments',
+                'list.board.lists',
             ])->findOrFail($cardId);
+            $this->authorize('view', $this->card);
             $this->title = $this->card->title;
             $this->description = $this->card->description;
             $this->currentBoardLists = $this->card->list->board->lists()
@@ -106,6 +118,8 @@ class CardForm extends Component
         if (!$this->card) {
             return;
         }
+
+        $this->authorize('update', $this->card);
 
         $position = (int) $this->card->checklists()->max('position') + 1;
 
@@ -166,6 +180,25 @@ class CardForm extends Component
         Notification::make()
             ->success()
             ->title(__('kanban::kanban.notification.cards.Card archived'))
+            ->send();
+    }
+
+    public function unarchiveCard(): void
+    {
+        if (!$this->card) {
+            return;
+        }
+
+        $this->authorize('unarchive', $this->card);
+
+        $this->card->unarchive();
+        $this->card->refresh();
+
+        $this->dispatch('card-updated');
+
+        Notification::make()
+            ->success()
+            ->title(__('kanban::kanban.notification.cards.Card unarchived'))
             ->send();
     }
 
